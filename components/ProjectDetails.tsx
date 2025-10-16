@@ -124,10 +124,12 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
             </button>
           )}
 
-          {project.status === 'GENERATING' && (
+          {(project.status === 'GENERATING' || project.status === 'BUILDING') && (
             <div className="text-center py-4">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-              <p className="text-gray-600">Generating your app...</p>
+              <p className="text-gray-600">
+                {project.status === 'GENERATING' ? 'Generating your app...' : 'Building APK and IPA files...'}
+              </p>
             </div>
           )}
 
@@ -138,18 +140,19 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
                 download
                 className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
               >
-                Download App
+                Download App (APK & IPA)
               </a>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <h4 className="font-semibold text-blue-900 mb-2">
-                  Next Steps:
+                  What's included:
                 </h4>
-                <ol className="list-decimal list-inside space-y-1 text-sm text-blue-800">
-                  <li>Extract the downloaded ZIP file</li>
-                  <li>Run <code className="bg-blue-100 px-2 py-0.5 rounded">npm install</code></li>
-                  <li>Run <code className="bg-blue-100 px-2 py-0.5 rounded">expo start</code></li>
-                  <li>Test on your device using Expo Go app</li>
-                </ol>
+                <ul className="list-disc list-inside space-y-1 text-sm text-blue-800">
+                  <li><strong>app.apk</strong> - Android application (install on Android devices)</li>
+                  <li><strong>app.ipa</strong> - iOS application (install on iOS devices via TestFlight or enterprise distribution)</li>
+                </ul>
+                <p className="mt-3 text-sm text-blue-800">
+                  Extract the ZIP file and install the appropriate file for your device.
+                </p>
               </div>
             </div>
           )}
