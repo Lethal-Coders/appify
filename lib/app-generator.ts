@@ -9,7 +9,7 @@ import { prisma } from './prisma'
 
 const execAsync = promisify(exec)
 
-const EAS_API_BASE = 'https://api.expo.dev/v2'
+const EXPO_GRAPHQL_API = 'https://api.expo.dev/graphql';
 const EXPO_TOKEN = process.env.EXPO_ACCESS_TOKEN
 
 const isWebUrl = (url: string) => url.startsWith('http://') || url.startsWith('https://');
@@ -96,12 +96,6 @@ export async function generateExpoApp(options: GenerateAppOptions) {
       join(projectDir, '.gitignore')
     )
 
-    // Copy eas.json
-    await copyFile(
-      join(templateDir, 'eas.json'),
-      join(projectDir, 'eas.json')
-    )
-
     // Copy or generate assets
     if (iconUrl) {
       const destinationIconPath = join(assetsDir, 'icon.png');
@@ -138,10 +132,6 @@ export async function generateExpoApp(options: GenerateAppOptions) {
       await copyFile(defaultSplash, join(assetsDir, 'splash.png'));
     }
 
-    // Initialize git repository (required by eas-cli)
-    console.log('Initializing git repository...');
-    await execAsync(`git init && git add . && git commit -m "Initial commit"`, { cwd: projectDir });
-
     // Update status to BUILDING
     await prisma.project.update({
       where: { id: projectId },
@@ -152,7 +142,7 @@ export async function generateExpoApp(options: GenerateAppOptions) {
     console.log('Installing dependencies...')
     await execAsync('npm install', { cwd: projectDir })
 
-    // Initialize EAS project (required before building in non-interactive mode)
+    // Initialize EAS project, which may create a default eas.json
     console.log('Initializing EAS project...')
     try {
       const { stdout, stderr } = await execAsync('npx eas-cli init --force --non-interactive', {
@@ -171,6 +161,42 @@ export async function generateExpoApp(options: GenerateAppOptions) {
       throw new Error('Failed to initialize EAS project')
     }
 
+    // Forcefully overwrite eas.json with a known-good configuration
+    console.log('Forcefully writing correct eas.json configuration...');
+    const easJsonPath = join(projectDir, 'eas.json');
+    const correctEasConfig = {
+      cli: {
+        version: ">= 5.2.0",
+        appVersionSource: "remote"
+      },
+      build: {
+        preview: {
+          android: {
+            buildType: "apk",
+            gradleCommand: ":app:assembleRelease",
+            withoutCredentials: true
+          },
+          ios: {
+            simulator: true,
+            image: "latest"
+          }
+        },
+        production: {
+          android: {
+            buildType: "app-bundle"
+          }
+        }
+      },
+      submit: {
+        production: {}
+      }
+    };
+    await writeFile(easJsonPath, JSON.stringify(correctEasConfig, null, 2));
+
+    // Initialize git repository and commit all files AFTER all modifications are complete
+    console.log('Initializing git repository and committing files...');
+    await execAsync(`git init && git add . && git commit -m "Initial commit"`, { cwd: projectDir });
+
     // Read the Expo project ID from app.json
     const updatedAppJson = JSON.parse(await readFile(join(projectDir, 'app.json'), 'utf-8'))
     const expoProjectId = updatedAppJson.expo?.extra?.eas?.projectId
@@ -180,7 +206,8 @@ export async function generateExpoApp(options: GenerateAppOptions) {
     console.log(`Expo project ID: ${expoProjectId}`)
 
     // Build APK and IPA files (iOS is optional)
-    const apkPath = await buildAndroidAPK(projectDir, projectId, expoProjectId)
+    // const apkPath = await buildAndroidAPK(projectDir, projectId, expoProjectId)
+    const apkPath = null;
 
     let ipaPath: string | null = null
     try {
@@ -223,6 +250,26 @@ async function pollBuildStatus(buildId: string, expoProjectId: string): Promise<
   const maxAttempts = 60 // Poll for up to 30 minutes
   const pollInterval = 30000 // Poll every 30 seconds
 
+  const graphqlQuery = {
+    query: `
+      query GetBuildById($buildId: ID!) {
+        build {
+          byId(buildId: $buildId) {
+            id
+            status
+            platform
+            artifacts {
+              buildUrl
+            }
+          }
+        }
+      }
+    `,
+    variables: {
+      buildId,
+    },
+  };
+
   // Add an initial delay before the first poll to avoid a race condition
   console.log('Waiting 10 seconds before first poll...');
   await new Promise(resolve => setTimeout(resolve, 10000));
@@ -234,42 +281,17 @@ async function pollBuildStatus(buildId: string, expoProjectId: string): Promise<
 
     try {
       console.log(`Polling for build ${buildId} (attempt ${attempt + 1}/${maxAttempts})...`);
-
-      // Use GraphQL API since REST API v2 doesn't support build queries
-      const query = `
-        query GetBuildById($buildId: ID!) {
-          build {
-            byId(buildId: $buildId) {
-              id
-              status
-              platform
-              artifacts {
-                buildUrl
-              }
-            }
-          }
-        }
-      `;
-
-      const response = await axios.post('https://api.expo.dev/graphql', {
-        query,
-        variables: { buildId }
-      }, {
+      const response = await axios.post(EXPO_GRAPHQL_API, graphqlQuery, {
         headers: {
           'Authorization': `Bearer ${EXPO_TOKEN}`,
           'Content-Type': 'application/json',
         },
       });
 
-      if (response.data.errors) {
-        console.error('GraphQL errors:', response.data.errors);
-        throw new Error(`GraphQL query failed: ${JSON.stringify(response.data.errors)}`);
-      }
-
       const build: EASBuild = response.data.data.build.byId;
 
       if (!build) {
-        console.log(`Build ${buildId} not found yet, will retry...`);
+        console.log(`Build ${buildId} not found in GraphQL response, will retry...`);
         continue;
       }
 
@@ -283,8 +305,7 @@ async function pollBuildStatus(buildId: string, expoProjectId: string): Promise<
         throw new Error(`Build ${buildId} failed with status: ${build.status}`);
       }
     } catch (error) {
-      console.error(`Error polling build ${buildId}:`, error);
-      // Continue polling even on errors
+      console.error(`An error occurred while polling build ${buildId}, will retry...`, error);
     }
   }
 
