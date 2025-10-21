@@ -9,12 +9,13 @@ const nextConfig = {
     domains: ['lh3.googleusercontent.com'],
   },
   webpack: (config, { isServer }) => {
-    // Don't externalize LibSQL packages - let webpack bundle them
-    // Ignore non-JS files in node_modules
-    config.module.rules.push({
-      test: /\.(md|txt|LICENSE)$/,
-      type: 'asset/source',
-    })
+    if (isServer) {
+      // Keep LibSQL packages external so they're not bundled
+      config.externals.push({
+        '@libsql/client': 'commonjs @libsql/client',
+        '@prisma/adapter-libsql': 'commonjs @prisma/adapter-libsql',
+      })
+    }
     return config
   },
 }
