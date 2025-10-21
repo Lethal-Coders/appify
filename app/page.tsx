@@ -33,7 +33,7 @@ export default function Home() {
               <div className="text-4xl mb-4">🌐</div>
               <h3 className="text-xl font-semibold mb-2">Enter Your URL</h3>
               <p className="text-gray-600">
-                Simply provide your website URL and we'll handle the rest
+                Simply provide your website URL and we&apos;ll handle the rest
               </p>
             </div>
 
