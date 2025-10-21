@@ -16,8 +16,8 @@ const isWebUrl = (url: string) => url.startsWith('http://') || url.startsWith('h
 
 interface EASBuild {
   id: string
-  status: 'new' | 'in-queue' | 'in-progress' | 'errored' | 'finished' | 'canceled'
-  platform: 'android' | 'ios'
+  status: 'NEW' | 'IN_QUEUE' | 'IN_PROGRESS' | 'ERRORED' | 'FINISHED' | 'CANCELED'
+  platform: 'ANDROID' | 'IOS'
   artifacts?: {
     buildUrl?: string
   }
@@ -206,8 +206,7 @@ export async function generateExpoApp(options: GenerateAppOptions) {
     console.log(`Expo project ID: ${expoProjectId}`)
 
     // Build APK and IPA files (iOS is optional)
-    // const apkPath = await buildAndroidAPK(projectDir, projectId, expoProjectId)
-    const apkPath = null;
+    const apkPath = await buildAndroidAPK(projectDir, projectId, expoProjectId)
 
     let ipaPath: string | null = null
     try {
@@ -250,23 +249,27 @@ async function pollBuildStatus(buildId: string, expoProjectId: string): Promise<
   const maxAttempts = 60 // Poll for up to 30 minutes
   const pollInterval = 30000 // Poll every 30 seconds
 
+  // Use the correct GraphQL query that queries through app.byId.builds
   const graphqlQuery = {
     query: `
-      query GetBuildById($buildId: ID!) {
-        build {
-          byId(buildId: $buildId) {
-            id
-            status
-            platform
-            artifacts {
-              buildUrl
+      query GetBuildsByApp($appId: String!) {
+        app {
+          byId(appId: $appId) {
+            builds(limit: 20, offset: 0) {
+              id
+              status
+              platform
+              createdAt
+              artifacts {
+                buildUrl
+              }
             }
           }
         }
       }
     `,
     variables: {
-      buildId,
+      appId: expoProjectId,
     },
   };
 
@@ -288,24 +291,42 @@ async function pollBuildStatus(buildId: string, expoProjectId: string): Promise<
         },
       });
 
-      const build: EASBuild = response.data.data.build.byId;
+      // Validate the response structure
+      if (!response.data?.data?.app?.byId?.builds) {
+        console.log(`Invalid GraphQL response structure:`, JSON.stringify(response.data, null, 2));
+        continue;
+      }
+
+      const builds: EASBuild[] = response.data.data.app.byId.builds;
+
+      // Find the specific build we're looking for
+      const build = builds.find((b: EASBuild) => b.id === buildId);
 
       if (!build) {
-        console.log(`Build ${buildId} not found in GraphQL response, will retry...`);
+        console.log(`Build ${buildId} not found in response, will retry...`);
         continue;
       }
 
       console.log(`Build ${buildId} status: ${build.status}`);
 
-      if (build.status === 'finished') {
+      if (build.status === 'FINISHED') {
         return build;
       }
 
-      if (build.status === 'errored' || build.status === 'canceled') {
+      if (build.status === 'ERRORED' || build.status === 'CANCELED') {
         throw new Error(`Build ${buildId} failed with status: ${build.status}`);
       }
     } catch (error) {
-      console.error(`An error occurred while polling build ${buildId}, will retry...`, error);
+      if (axios.isAxiosError(error)) {
+        // Check for authentication or authorization errors (unrecoverable)
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          throw new Error(`Authentication failed while polling build ${buildId}: ${error.message}`);
+        }
+        // Log and retry for other HTTP errors
+        console.error(`HTTP error while polling build ${buildId} (attempt ${attempt + 1}):`, error.response?.status, error.response?.data);
+      } else {
+        console.error(`An error occurred while polling build ${buildId} (attempt ${attempt + 1}):`, error);
+      }
     }
   }
 
