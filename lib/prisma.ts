@@ -26,7 +26,10 @@ function createPrismaClient() {
       const adapter = new PrismaLibSQL(libsql)
 
       console.log('[Prisma] Creating Prisma client with adapter')
-      const client = new PrismaClient({ adapter } as any)
+      const client = new PrismaClient({
+        adapter,
+        datasourceUrl: process.env.DATABASE_URL
+      } as any)
       console.log('[Prisma] Prisma client created successfully')
 
       return client
