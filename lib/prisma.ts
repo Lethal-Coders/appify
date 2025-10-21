@@ -15,20 +15,34 @@ function createPrismaClient() {
       const { PrismaLibSQL } = require('@prisma/adapter-libsql')
       const { createClient } = require('@libsql/client')
 
+      console.log('[Prisma] Creating LibSQL client with URL:', process.env.DATABASE_URL?.substring(0, 40))
+
       const libsql = createClient({
-        url: process.env.DATABASE_URL,
-        authToken: process.env.TURSO_AUTH_TOKEN,
+        url: process.env.DATABASE_URL!,
+        authToken: process.env.TURSO_AUTH_TOKEN!,
       })
 
+      console.log('[Prisma] Creating Prisma adapter')
       const adapter = new PrismaLibSQL(libsql)
-      return new PrismaClient({ adapter } as any)
-    } catch (error) {
-      console.error('Failed to initialize LibSQL adapter:', error)
-      throw new Error('LibSQL adapter required for libsql:// URLs')
+
+      console.log('[Prisma] Creating Prisma client with adapter')
+      const client = new PrismaClient({ adapter } as any)
+      console.log('[Prisma] Prisma client created successfully')
+
+      return client
+    } catch (error: any) {
+      console.error('[Prisma] Failed to initialize LibSQL adapter:',  {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      })
+      // Fall back to regular client and let it fail with a better error
+      return new PrismaClient()
     }
   }
 
   // Default Prisma Client
+  console.log('[Prisma] Using default Prisma client')
   return new PrismaClient()
 }
 
