@@ -43,7 +43,7 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
     }
   }
 
-  const statusColors = {
+  const statusColors: Record<string, string> = {
     DRAFT: 'bg-gray-100 text-gray-800',
     GENERATING: 'bg-blue-100 text-blue-800',
     BUILDING: 'bg-yellow-100 text-yellow-800',
