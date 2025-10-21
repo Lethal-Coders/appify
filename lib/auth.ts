@@ -12,16 +12,29 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log('[NextAuth] signIn callback', { user, account: account?.provider, profile: !!profile })
+      return true
+    },
     session: async ({ session, user }) => {
+      console.log('[NextAuth] session callback', { session: !!session, user: !!user })
       if (session?.user) {
         session.user.id = user.id
       }
       return session
     },
   },
+  events: {
+    async signIn(message) {
+      console.log('[NextAuth] signIn event', message)
+    },
+    async createUser(message) {
+      console.log('[NextAuth] createUser event', message.user)
+    },
+  },
   pages: {
     signIn: '/auth/signin',
   },
   useSecureCookies: process.env.NODE_ENV === 'production',
-  debug: process.env.NODE_ENV === 'development',
+  debug: true,
 }
