@@ -40,7 +40,7 @@ export async function GET(
     const fileBuffer = await readFile(zipPath)
 
     // Return the file
-    return new NextResponse(fileBuffer, {
+    return new NextResponse(fileBuffer as unknown as BodyInit, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${project.name}.zip"`,
