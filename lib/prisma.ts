@@ -5,21 +5,28 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  // Only use LibSQL adapter if DATABASE_URL is a libsql:// URL
-  if (process.env.DATABASE_URL?.startsWith('libsql://')) {
-    const { PrismaLibSQL } = require('@prisma/adapter-libsql')
-    const { createClient } = require('@libsql/client')
+  // Only use LibSQL adapter if DATABASE_URL is a libsql:// URL and we're not in build phase
+  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build'
 
-    const libsql = createClient({
-      url: process.env.DATABASE_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    })
+  if (process.env.DATABASE_URL?.startsWith('libsql://') && !isBuildPhase) {
+    try {
+      const { PrismaLibSQL } = require('@prisma/adapter-libsql')
+      const { createClient } = require('@libsql/client')
 
-    const adapter = new PrismaLibSQL(libsql)
-    return new PrismaClient({ adapter })
+      const libsql = createClient({
+        url: process.env.DATABASE_URL,
+        authToken: process.env.TURSO_AUTH_TOKEN,
+      })
+
+      const adapter = new PrismaLibSQL(libsql)
+      return new PrismaClient({ adapter })
+    } catch (error) {
+      console.warn('Failed to initialize LibSQL adapter, falling back to default Prisma Client:', error)
+      return new PrismaClient()
+    }
   }
 
-  // Default to regular Prisma Client for SQLite
+  // Default to regular Prisma Client for SQLite or during build
   return new PrismaClient()
 }
 
