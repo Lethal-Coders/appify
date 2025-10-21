@@ -1,4 +1,6 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaLibSQL } from '@prisma/adapter-libsql'
+import { createClient } from '@libsql/client'
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined
@@ -11,22 +13,13 @@ function createPrismaClient() {
   if (process.env.DATABASE_URL?.startsWith('libsql://') && !isBuildPhase) {
     console.log('Initializing Prisma with LibSQL adapter for Turso')
 
-    try {
-      // Use dynamic imports to avoid loading these during build
-      const { PrismaLibSQL } = eval('require')('@prisma/adapter-libsql')
-      const { createClient } = eval('require')('@libsql/client')
+    const libsql = createClient({
+      url: process.env.DATABASE_URL,
+      authToken: process.env.TURSO_AUTH_TOKEN,
+    })
 
-      const libsql = createClient({
-        url: process.env.DATABASE_URL,
-        authToken: process.env.TURSO_AUTH_TOKEN,
-      })
-
-      const adapter = new PrismaLibSQL(libsql)
-      return new PrismaClient({ adapter } as any)
-    } catch (error) {
-      console.error('Failed to initialize LibSQL adapter:', error)
-      throw error  // Don't fall back - we need LibSQL for this URL
-    }
+    const adapter = new PrismaLibSQL(libsql as any)
+    return new PrismaClient({ adapter } as any)
   }
 
   // Default to regular Prisma Client for SQLite or during build
