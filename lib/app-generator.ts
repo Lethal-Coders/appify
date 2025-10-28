@@ -170,20 +170,13 @@ export async function generateExpoApp(options: GenerateAppOptions) {
         appVersionSource: "remote"
       },
       build: {
-        preview: {
+        production: {
           android: {
-            buildType: "apk",
-            gradleCommand: ":app:assembleRelease",
-            withoutCredentials: true
+            buildType: "app-bundle"
           },
           ios: {
             simulator: true,
             image: "latest"
-          }
-        },
-        production: {
-          android: {
-            buildType: "app-bundle"
           }
         }
       },
@@ -205,21 +198,21 @@ export async function generateExpoApp(options: GenerateAppOptions) {
     }
     console.log(`Expo project ID: ${expoProjectId}`)
 
-    // Build APK and IPA files (iOS is optional)
-    const apkPath = await buildAndroidAPK(projectDir, projectId, expoProjectId)
+    // Build AAB and IPA files (iOS is optional)
+    const aabPath = await buildAndroidAAB(projectDir, projectId, expoProjectId)
 
     let ipaPath: string | null = null
     try {
       ipaPath = await buildIOSIPA(projectDir, projectId, expoProjectId)
     } catch (error) {
       console.error('iOS build failed (this is optional):', error)
-      console.log('Continuing with Android APK only...')
+      console.log('Continuing with Android AAB only...')
     }
 
     // Create ZIP file with available binaries
     const zipPath = join(process.cwd(), 'generated', `${projectId}.zip`)
-    if (apkPath || ipaPath) {
-      await createZipWithBinaries(apkPath, ipaPath, zipPath)
+    if (aabPath || ipaPath) {
+      await createZipWithBinaries(aabPath, ipaPath, zipPath)
     } else {
       console.log('No build artifacts were generated to zip.');
     }
@@ -343,11 +336,12 @@ async function downloadArtifact(url: string, outputPath: string): Promise<void> 
   console.log(`Downloaded artifact to ${outputPath}`)
 }
 
-async function buildAndroidAPK(projectDir: string, projectId: string, expoProjectId: string): Promise<string | null> {
+async function buildAndroidAAB(projectDir: string, projectId: string, expoProjectId: string): Promise<string | null> {
   try {
-    // Build Android APK using EAS cloud build (unsigned for testing)
+    // Build Android App Bundle (AAB) using EAS cloud build for production
+    console.log('Starting Android AAB build...')
     const { stdout, stderr } = await execAsync(
-      'npx eas-cli build --platform android --profile preview --non-interactive --no-wait',
+      'npx eas-cli build --platform android --profile production --non-interactive --no-wait',
       {
         cwd: projectDir,
         env: {
@@ -357,8 +351,8 @@ async function buildAndroidAPK(projectDir: string, projectId: string, expoProjec
       }
     )
 
-    console.log('EAS Android build output:', stdout)
-    if (stderr) console.log('EAS Android build stderr:', stderr)
+    console.log('EAS Android AAB build output:', stdout)
+    if (stderr) console.log('EAS Android AAB build stderr:', stderr)
 
     // Extract build ID from output (format: ".../builds/<uuid>")
     const buildIdMatch = stdout.match(/builds\/([a-f0-9-]{36})/i)
@@ -367,7 +361,7 @@ async function buildAndroidAPK(projectDir: string, projectId: string, expoProjec
     }
 
     const buildId = buildIdMatch[1]
-    console.log(`Android build ID: ${buildId}`)
+    console.log(`Android AAB build ID: ${buildId}`)
 
     // Poll for build completion
     const completedBuild = await pollBuildStatus(buildId, expoProjectId)
@@ -376,18 +370,26 @@ async function buildAndroidAPK(projectDir: string, projectId: string, expoProjec
       throw new Error('Build completed but no artifact URL found')
     }
 
-    // Download the APK
+    // Download the AAB
     const buildDir = join(projectDir, 'build')
     await mkdir(buildDir, { recursive: true })
-    const apkPath = join(buildDir, `${projectId}.apk`)
+    const aabPath = join(buildDir, `${projectId}.aab`)
 
-    await downloadArtifact(completedBuild.artifacts.buildUrl, apkPath)
+    console.log(`Downloading AAB from ${completedBuild.artifacts.buildUrl}`)
+    await downloadArtifact(completedBuild.artifacts.buildUrl, aabPath)
 
-    return apkPath
+    console.log(`Android AAB successfully built and downloaded to ${aabPath}`)
+    return aabPath
   } catch (error) {
-    console.error('Error building Android APK:', error)
+    console.error('Error building Android AAB:', error)
     return null;
   }
+}
+
+async function buildAndroidAPK(projectDir: string, projectId: string, expoProjectId: string): Promise<string | null> {
+  // This function is kept for reference but not used anymore
+  // The app now generates AAB files instead
+  return null;
 }
 
 async function buildIOSIPA(projectDir: string, projectId: string, expoProjectId: string): Promise<string | null> {
@@ -437,7 +439,7 @@ async function buildIOSIPA(projectDir: string, projectId: string, expoProjectId:
   }
 }
 
-async function createZipWithBinaries(apkPath: string | null, ipaPath: string | null, outputPath: string): Promise<void> {
+async function createZipWithBinaries(aabPath: string | null, ipaPath: string | null, outputPath: string): Promise<void> {
   return new Promise((resolve, reject) => {
     const output = createWriteStream(outputPath)
     const archive = archiver('zip', { zlib: { level: 9 } })
@@ -447,9 +449,9 @@ async function createZipWithBinaries(apkPath: string | null, ipaPath: string | n
 
     archive.pipe(output)
 
-    // Add APK file to the zip
-    if (apkPath) {
-      archive.file(apkPath, { name: 'app.apk' })
+    // Add AAB file to the zip
+    if (aabPath) {
+      archive.file(aabPath, { name: 'app.aab' })
     }
 
     // Add IPA file if available

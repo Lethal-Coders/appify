@@ -38,16 +38,19 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  projects      Project[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  name              String?
+  email             String?   @unique
+  emailVerified     DateTime?
+  image             String?
+  accounts          Account[]
+  sessions          Session[]
+  projects          Project[]
+  payments          Payment[]
+  subscription      Subscription?
+  stripeCustomerId  String?   @unique
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 }
 
 model VerificationToken {
@@ -69,8 +72,46 @@ model Project {
   expoProjectId String?
   buildId       String?
   downloadUrl   String?
+  isPaid        Boolean  @default(false)
+  paymentId     String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payment Payment? @relation(fields: [paymentId], references: [id])
+
+  @@index([userId])
+}
+
+model Payment {
+  id                String   @id @default(cuid())
+  userId            String
+  amount            Float
+  currency          String   @default("usd")
+  status            String   @default("pending")
+  stripePaymentId   String?  @unique
+  stripeSessionId   String?  @unique
+  plan              String   // "single", "monthly", "yearly"
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  projects Project[]
+
+  @@index([userId])
+  @@index([stripePaymentId])
+}
+
+model Subscription {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  stripeSubscriptionId   String   @unique
+  stripePriceId          String
+  stripeCurrentPeriodEnd DateTime
+  status                 String   // "active", "canceled", "incomplete", "incomplete_expired", "past_due", "trialing", "unpaid"
+  plan                   String   // "monthly", "yearly"
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 

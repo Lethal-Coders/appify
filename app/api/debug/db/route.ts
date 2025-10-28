@@ -7,6 +7,31 @@ export async function GET() {
     const userCount = await prisma.user.count()
     const accountCount = await prisma.account.count()
     const sessionCount = await prisma.session.count()
+    const projectCount = await prisma.project.count()
+    const paymentCount = await prisma.payment.count()
+
+    // Get all projects with their payment status
+    const projects = await prisma.project.findMany({
+      include: {
+        payment: true,
+        user: {
+          select: {
+            email: true,
+          }
+        }
+      }
+    })
+
+    // Get all payments
+    const payments = await prisma.payment.findMany({
+      include: {
+        user: {
+          select: {
+            email: true,
+          }
+        }
+      }
+    })
 
     return NextResponse.json({
       success: true,
@@ -18,7 +43,11 @@ export async function GET() {
         users: userCount,
         accounts: accountCount,
         sessions: sessionCount,
+        projects: projectCount,
+        payments: paymentCount,
       },
+      projects,
+      payments,
       env: {
         nodeEnv: process.env.NODE_ENV,
         nextPhase: process.env.NEXT_PHASE,

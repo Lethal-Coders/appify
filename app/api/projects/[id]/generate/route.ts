@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
 import { generateExpoApp } from '@/lib/app-generator'
+import { canGenerateApp } from '@/lib/subscription'
 
 export async function POST(
   request: NextRequest,
@@ -25,6 +26,16 @@ export async function POST(
 
     if (project.userId !== session.user.id) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Check if user can generate this app (payment check)
+    const accessCheck = await canGenerateApp(session.user.id, params.id)
+
+    if (!accessCheck.canGenerate) {
+      return NextResponse.json(
+        { error: accessCheck.reason || 'Payment required to generate app' },
+        { status: 403 }
+      )
     }
 
     // Generate the app in the background

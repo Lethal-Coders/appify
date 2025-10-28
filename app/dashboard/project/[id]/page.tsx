@@ -2,8 +2,9 @@ import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { prisma } from '@/lib/prisma'
-import Header from '@/components/Header'
 import ProjectDetails from '@/components/ProjectDetails'
+import { canGenerateApp } from '@/lib/subscription'
+import DashboardLayout from '@/components/DashboardLayout'
 
 export default async function ProjectPage({
   params,
@@ -24,13 +25,16 @@ export default async function ProjectPage({
     redirect('/dashboard')
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <Header user={session.user} />
+  // Check if user can generate this app
+  const accessCheck = await canGenerateApp(session.user.id, params.id)
 
-      <main className="container mx-auto px-4 py-8">
-        <ProjectDetails project={project} />
-      </main>
-    </div>
+  return (
+    <DashboardLayout user={session.user}>
+      <ProjectDetails 
+        project={project} 
+        canGenerate={accessCheck.canGenerate}
+        requiresPayment={accessCheck.requiresPayment}
+      />
+    </DashboardLayout>
   )
 }

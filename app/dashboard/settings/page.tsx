@@ -1,14 +1,14 @@
 import { redirect } from 'next/navigation'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import CreateProjectForm from '@/components/CreateProjectForm'
+import SettingsContent from '@/components/SettingsContent'
 import DashboardLayout from '@/components/DashboardLayout'
 
-export default async function CreateProject() {
+export default async function SettingsPage() {
   const session = await getServerSession(authOptions)
 
   if (!session) {
-    redirect('/auth/signin?callbackUrl=/dashboard/create')
+    redirect('/auth/signin?callbackUrl=/dashboard/settings')
   }
 
   return (
@@ -16,14 +16,14 @@ export default async function CreateProject() {
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Create New App
+            Settings
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Fill in the details below to generate your mobile app
+            Manage your account settings and preferences
           </p>
         </div>
 
-        <CreateProjectForm userId={session.user?.id} />
+        <SettingsContent />
       </div>
     </DashboardLayout>
   )

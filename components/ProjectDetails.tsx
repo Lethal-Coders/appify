@@ -4,12 +4,19 @@ import { useState } from 'react'
 import { Project } from '@prisma/client'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 interface ProjectDetailsProps {
   project: Project
+  canGenerate: boolean
+  requiresPayment: boolean
 }
 
-export default function ProjectDetails({ project: initialProject }: ProjectDetailsProps) {
+export default function ProjectDetails({ 
+  project: initialProject, 
+  canGenerate,
+  requiresPayment 
+}: ProjectDetailsProps) {
   const router = useRouter()
   const [project, setProject] = useState(initialProject)
   const [generating, setGenerating] = useState(false)
@@ -22,7 +29,10 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
         method: 'POST',
       })
 
-      if (!response.ok) throw new Error('Failed to generate app')
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Failed to generate app')
+      }
 
       // Poll for status updates
       const pollStatus = setInterval(async () => {
@@ -36,19 +46,23 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
           router.refresh()
         }
       }, 2000)
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating app:', error)
-      alert('Failed to generate app. Please try again.')
+      alert(error.message || 'Failed to generate app. Please try again.')
       setGenerating(false)
     }
   }
 
+  const handlePayment = () => {
+    router.push(`/dashboard/pricing?project_id=${project.id}`)
+  }
+
   const statusColors: Record<string, string> = {
-    DRAFT: 'bg-gray-100 text-gray-800',
-    GENERATING: 'bg-blue-100 text-blue-800',
-    BUILDING: 'bg-yellow-100 text-yellow-800',
-    COMPLETED: 'bg-green-100 text-green-800',
-    FAILED: 'bg-red-100 text-red-800',
+    DRAFT: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200',
+    GENERATING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200',
+    BUILDING: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
+    COMPLETED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
+    FAILED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200',
   }
 
   return (
@@ -56,118 +70,185 @@ export default function ProjectDetails({ project: initialProject }: ProjectDetai
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="text-primary hover:text-primary/80 text-sm"
+          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm inline-flex items-center gap-2"
         >
-          ← Back to Dashboard
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to Dashboard
         </Link>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm p-8">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-8 border border-gray-200 dark:border-gray-700">
         <div className="flex justify-between items-start mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
               {project.name}
             </h1>
-            <p className="text-gray-600">{project.websiteUrl}</p>
+            <a 
+              href={project.websiteUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-purple-600 dark:text-purple-400 hover:underline"
+            >
+              {project.websiteUrl}
+            </a>
           </div>
-          <span
-            className={`px-3 py-1 rounded-full text-sm font-medium ${
-              statusColors[project.status]
-            }`}
-          >
-            {project.status}
-          </span>
+          <div className="flex gap-2 items-center">
+            {project.isPaid && (
+              <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200">
+                ✓ Paid
+              </span>
+            )}
+            <span
+              className={`px-3 py-1 rounded-full text-sm font-medium ${
+                statusColors[project.status]
+              }`}
+            >
+              {project.status}
+            </span>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 mb-8">
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">App Icon</h3>
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">App Icon</h3>
             {project.iconUrl ? (
-              <img
+              <Image
                 src={project.iconUrl}
                 alt="App Icon"
-                className="w-24 h-24 rounded-lg border border-gray-200"
+                width={96}
+                height={96}
+                className="rounded-lg border border-gray-200 dark:border-gray-700"
               />
             ) : (
-              <div className="w-24 h-24 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400">
+              <div className="w-24 h-24 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No icon
               </div>
             )}
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-700 mb-2">
+            <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Splash Screen
             </h3>
             {project.splashUrl ? (
-              <img
+              <Image
                 src={project.splashUrl}
                 alt="Splash Screen"
-                className="w-32 h-48 rounded-lg border border-gray-200 object-cover"
+                width={128}
+                height={192}
+                className="rounded-lg border border-gray-200 dark:border-gray-700 object-cover"
               />
             ) : (
-              <div className="w-32 h-48 rounded-lg border border-gray-200 flex items-center justify-center text-gray-400">
+              <div className="w-32 h-48 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-400 dark:text-gray-500">
                 No splash
               </div>
             )}
           </div>
         </div>
 
-        <div className="border-t pt-6">
+        <div className="border-t border-gray-200 dark:border-gray-700 pt-6">
           {project.status === 'DRAFT' && (
-            <button
-              onClick={handleGenerate}
-              disabled={generating}
-              className="bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {generating ? 'Generating...' : 'Generate App'}
-            </button>
+            <>
+              {requiresPayment ? (
+                <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg p-6 text-center">
+                  <div className="text-5xl mb-3">💳</div>
+                  <h3 className="text-xl font-semibold text-yellow-900 dark:text-yellow-300 mb-2">
+                    Payment Required
+                  </h3>
+                  <p className="text-yellow-800 dark:text-yellow-400 mb-6">
+                    To generate this app, you need to purchase a plan or have an active subscription.
+                  </p>
+                  <button
+                    onClick={handlePayment}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 shadow-lg"
+                  >
+                    Choose a Plan
+                  </button>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <button
+                    onClick={handleGenerate}
+                    disabled={generating}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  >
+                    {generating ? 'Generating...' : '🚀 Generate App'}
+                  </button>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-3">
+                    This will create your iOS and Android app files
+                  </p>
+                </div>
+              )}
+            </>
           )}
 
           {(project.status === 'GENERATING' || project.status === 'BUILDING') && (
-            <div className="text-center py-4">
-              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
-              <p className="text-gray-600">
-                {project.status === 'GENERATING' ? 'Generating your app...' : 'Building APK and IPA files...'}
+            <div className="text-center py-8">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
+                {project.status === 'GENERATING' ? 'Generating your app...' : 'Building AAB and IPA files...'}
+              </p>
+              <p className="text-sm text-gray-500 dark:text-gray-500 mt-2">
+                This may take a few minutes
               </p>
             </div>
           )}
 
           {project.status === 'COMPLETED' && project.downloadUrl && (
-            <div className="space-y-4">
+            <div className="space-y-4 text-center">
+              <div className="text-6xl mb-4">🎉</div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Your App is Ready!
+              </h3>
               <a
                 href={project.downloadUrl}
                 download
-                className="inline-block bg-green-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-green-700 transition"
+                className="inline-block bg-gradient-to-r from-green-600 to-green-700 text-white px-8 py-4 rounded-lg font-semibold hover:from-green-700 hover:to-green-800 transition transform hover:scale-105 shadow-lg"
               >
-                Download App (APK & IPA)
+                📥 Download App (AAB & IPA)
               </a>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <h4 className="font-semibold text-blue-900 mb-2">
+              <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-6 mt-6">
+                <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-3">
                   What&apos;s included:
                 </h4>
-                <ul className="list-disc list-inside space-y-1 text-sm text-blue-800">
-                  <li><strong>app.apk</strong> - Android application (install on Android devices)</li>
-                  <li><strong>app.ipa</strong> - iOS application (install on iOS devices via TestFlight or enterprise distribution)</li>
+                <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-300 text-left max-w-2xl mx-auto">
+                  <li className="flex items-start">
+                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span><strong>app.aab</strong> - Android App Bundle (for Google Play Store submission)</span>
+                  </li>
+                  <li className="flex items-start">
+                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span><strong>app.ipa</strong> - iOS application (install via TestFlight or enterprise distribution)</span>
+                  </li>
                 </ul>
-                <p className="mt-3 text-sm text-blue-800">
-                  Extract the ZIP file and install the appropriate file for your device.
+                <p className="mt-4 text-sm text-purple-700 dark:text-purple-400">
+                  💡 Extract the ZIP file. Upload the AAB to Google Play Console for Android distribution.
                 </p>
               </div>
             </div>
           )}
 
           {project.status === 'FAILED' && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-800">
-                App generation failed. Please try again or contact support.
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+              <div className="text-5xl mb-3">❌</div>
+              <h3 className="text-xl font-semibold text-red-900 dark:text-red-300 mb-2">
+                Generation Failed
+              </h3>
+              <p className="text-red-800 dark:text-red-400 mb-4">
+                App generation failed. Please try again or contact support if the issue persists.
               </p>
               <button
                 onClick={handleGenerate}
-                disabled={generating}
-                className="mt-4 bg-primary text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary/90 transition"
+                disabled={generating || requiresPayment}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Retry
+                {requiresPayment ? 'Payment Required' : '🔄 Retry Generation'}
               </button>
             </div>
           )}

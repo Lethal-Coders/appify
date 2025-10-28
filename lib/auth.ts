@@ -11,15 +11,25 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
     }),
   ],
+  session: {
+    strategy: 'jwt',
+  },
   callbacks: {
     async signIn({ user, account, profile }) {
       console.log('[NextAuth] signIn callback', { user, account: account?.provider, profile: !!profile })
       return true
     },
-    session: async ({ session, user }) => {
-      console.log('[NextAuth] session callback', { session: !!session, user: !!user })
+    async jwt({ token, user }) {
+      if (user) {
+        token.id = (user as any).id
+      }
+      return token
+    },
+    session: async ({ session, token }) => {
+      console.log('[NextAuth] session callback', { session: !!session, token: !!token })
       if (session?.user) {
-        session.user.id = user.id
+        // Prefer token.id, fallback to token.sub
+        ;(session.user as any).id = (token as any).id || token.sub || (session.user as any).id
       }
       return session
     },

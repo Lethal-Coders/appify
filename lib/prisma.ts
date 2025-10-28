@@ -5,9 +5,9 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  // Check if we should use LibSQL adapter
+  // Prefer local SQLite in dev. Only use Turso when explicitly enabled.
   const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build'
-  const useTurso = process.env.DATABASE_URL?.startsWith('libsql://') && !isBuildPhase
+  const useTurso = process.env.USE_TURSO === 'true' && !!process.env.TURSO_DATABASE_URL && !isBuildPhase
 
   if (useTurso) {
     try {
@@ -15,10 +15,11 @@ function createPrismaClient() {
       const { PrismaLibSQL } = require('@prisma/adapter-libsql')
       const { createClient } = require('@libsql/client')
 
-      console.log('[Prisma] Creating LibSQL client with URL:', process.env.DATABASE_URL?.substring(0, 40))
+      const dbUrl = process.env.TURSO_DATABASE_URL
+      console.log('[Prisma] Creating LibSQL client with URL:', dbUrl?.substring(0, 40))
 
       const libsql = createClient({
-        url: process.env.DATABASE_URL!,
+        url: dbUrl!,
         authToken: process.env.TURSO_AUTH_TOKEN!,
       })
 
@@ -28,7 +29,6 @@ function createPrismaClient() {
       console.log('[Prisma] Creating Prisma client with adapter')
       const client = new PrismaClient({
         adapter,
-        datasourceUrl: process.env.DATABASE_URL
       } as any)
       console.log('[Prisma] Prisma client created successfully')
 
@@ -39,12 +39,12 @@ function createPrismaClient() {
         stack: error.stack,
         name: error.name
       })
-      // Fall back to regular client and let it fail with a better error
+      // Fall back to regular client
       return new PrismaClient()
     }
   }
 
-  // Default Prisma Client
+  // Default Prisma Client (uses prisma/schema.prisma datasource)
   console.log('[Prisma] Using default Prisma client')
   return new PrismaClient()
 }
