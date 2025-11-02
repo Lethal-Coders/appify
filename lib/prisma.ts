@@ -5,29 +5,27 @@ const globalForPrisma = globalThis as unknown as {
 }
 
 function createPrismaClient() {
-  const isVercel = !!process.env.VERCEL_ENV;
-  const useTurso = isVercel && !!process.env.TURSO_DATABASE_URL;
+  const tursoDbUrl = process.env.TURSO_DATABASE_URL;
+  const tursoAuthToken = process.env.TURSO_AUTH_TOKEN;
 
   console.log('[Prisma] Environment check:', {
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PHASE: process.env.NEXT_PHASE,
-    VERCEL_ENV: process.env.VERCEL_ENV,
-    isVercel,
-    useTurso,
-    hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
+    hasTursoUrl: !!tursoDbUrl,
+    hasTursoToken: !!tursoAuthToken,
+    tursoUrlPreview: tursoDbUrl?.substring(0, 40) || 'NOT SET',
   });
 
-  if (useTurso) {
+  // Use Turso if the specific Turso environment variables are set
+  if (tursoDbUrl && tursoAuthToken) {
     try {
-      // Database connection for Vercel (production)
+      console.log('[Prisma] Using Turso based on TURSO_DATABASE_URL.');
       const { PrismaLibSQL } = require('@prisma/adapter-libsql');
       const { createClient } = require('@libsql/client');
-      
-      console.log('[Prisma] Using Turso for Vercel runtime.');
 
       const libsql = createClient({
-        url: process.env.TURSO_DATABASE_URL!,
-        authToken: process.env.TURSO_AUTH_TOKEN!,
+        url: tursoDbUrl,
+        authToken: tursoAuthToken,
       });
 
       const adapter = new PrismaLibSQL(libsql);
