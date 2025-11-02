@@ -1,1 +1,0 @@
-// This file is no longer needed as the support page has been moved to a public route.
