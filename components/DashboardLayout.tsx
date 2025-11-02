@@ -21,7 +21,7 @@ export default function DashboardLayout({ children, user }: DashboardLayoutProps
       <div className={`transition-all duration-300 ${
         sidebarCollapsed ? 'ml-0 md:ml-20' : 'ml-0 md:ml-64'
       }`}>
-        <Header user={user} />
+        <Header />
         
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           {children}
