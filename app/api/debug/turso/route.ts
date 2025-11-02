@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server'
 
 export async function GET() {
   try {
-    // Try to load and use LibSQL directly without Prisma
     const { createClient } = require('@libsql/client')
 
     const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL
@@ -18,12 +17,16 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       userCount: result.rows[0].count,
-      message: 'LibSQL connection successful'
+      urlPreview: url.substring(0, 40) + '...',
+      message: 'LibSQL connection successful',
     })
   } catch (error: any) {
     return NextResponse.json({
       success: false,
       error: error.message,
+      hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
+      hasDbUrl: !!process.env.DATABASE_URL,
+      hasToken: !!process.env.TURSO_AUTH_TOKEN,
       stack: error.stack,
     }, { status: 500 })
   }
