@@ -11,17 +11,17 @@ function SignInForm() {
   const callbackUrl = redirect || searchParams.get('callbackUrl') || '/dashboard'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-blue-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-gray-900 relative overflow-hidden flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 via-purple-50 to-purple-100 dark:from-gray-950 dark:via-[#140F1F] dark:to-black relative overflow-hidden flex items-center justify-center px-4">
       {/* Decorative circles */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#B197E0]/10 dark:bg-[#524278]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#8B7AB8]/10 dark:bg-[#3D2F5A]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
       <div className="max-w-md w-full relative z-10">
         {/* Back to Home */}
         <div className="mb-8 text-center">
           <Link
             href="/"
-            className="inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
+            className="inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-[#8B7AB8] dark:hover:text-[#B197E0] transition"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -32,7 +32,7 @@ function SignInForm() {
 
         <div className="bg-white/80 dark:bg-black/60 backdrop-blur-xl rounded-3xl p-8 shadow-2xl border border-gray-200/50 dark:border-gray-800/50">
           <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent mb-2">
+            <h2 className="text-3xl font-bold bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] bg-clip-text text-transparent mb-2">
               Sign in to Appify
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
@@ -42,7 +42,7 @@ function SignInForm() {
 
           <button
             onClick={() => signIn('google', { callbackUrl })}
-            className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-full shadow-sm text-gray-700 dark:text-gray-300 font-medium hover:border-purple-500 dark:hover:border-purple-500 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105"
+            className="w-full flex justify-center items-center gap-3 py-4 px-6 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded-full shadow-sm text-gray-700 dark:text-gray-300 font-medium hover:border-[#B197E0] dark:hover:border-[#8B7AB8] hover:bg-gray-50 dark:hover:bg-gray-700 transition-all transform hover:scale-105"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24">
               <path
@@ -77,7 +77,7 @@ function SignInForm() {
 export default function SignIn() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-blue-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-gray-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-100 via-purple-50 to-purple-100 dark:from-gray-950 dark:via-[#140F1F] dark:to-black flex items-center justify-center">
         <div className="text-lg text-gray-700 dark:text-gray-300">Loading...</div>
       </div>
     }>

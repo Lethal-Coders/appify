@@ -155,10 +155,10 @@ export default function SetupWizard() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-blue-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-gray-900 relative overflow-hidden py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-b from-slate-100 via-purple-50 to-purple-100 dark:from-gray-950 dark:via-[#140F1F] dark:to-black relative overflow-hidden py-12 px-4">
       {/* Decorative circles */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#B197E0]/10 dark:bg-[#524278]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#8B7AB8]/10 dark:bg-[#3D2F5A]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
       <div className="max-w-2xl mx-auto relative z-10">
         {/* Progress Bar */}
@@ -169,7 +169,7 @@ export default function SetupWizard() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition ${
                     step <= currentStep
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
+                      ? 'bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white'
                       : 'bg-gray-300 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                   }`}
                 >
@@ -179,7 +179,7 @@ export default function SetupWizard() {
                   <div
                     className={`h-1 w-12 sm:w-20 mx-2 transition ${
                       step < currentStep
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600'
+                        ? 'bg-gradient-to-r from-[#B197E0] to-[#524278]'
                         : 'bg-gray-300 dark:bg-gray-700'
                     }`}
                   ></div>
@@ -214,7 +214,7 @@ export default function SetupWizard() {
                   value={wizardData.appName}
                   onChange={(e) => setWizardData({ ...wizardData, appName: e.target.value })}
                   placeholder="e.g., My Awesome App"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition"
                 />
                 {errors.appName && (
                   <p className="text-red-500 text-sm mt-2">{errors.appName}</p>
@@ -243,7 +243,7 @@ export default function SetupWizard() {
                   value={wizardData.websiteUrl}
                   onChange={(e) => setWizardData({ ...wizardData, websiteUrl: e.target.value })}
                   placeholder="https://example.com"
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition"
                 />
                 {errors.websiteUrl && (
                   <p className="text-red-500 text-sm mt-2">{errors.websiteUrl}</p>
@@ -370,7 +370,7 @@ export default function SetupWizard() {
                         onChange={(e) => handleFileUpload(e, 'icon')}
                         className="hidden"
                       />
-                      <span className="text-purple-600 dark:text-purple-400 font-medium">
+                      <span className="text-[#8B7AB8] dark:text-[#B197E0] font-medium">
                         Browse Files
                       </span>
                     </label>
@@ -427,7 +427,7 @@ export default function SetupWizard() {
                         onChange={(e) => handleFileUpload(e, 'splash')}
                         className="hidden"
                       />
-                      <span className="text-purple-600 dark:text-purple-400 font-medium">
+                      <span className="text-[#8B7AB8] dark:text-[#B197E0] font-medium">
                         Browse Files
                       </span>
                     </label>
@@ -452,7 +452,7 @@ export default function SetupWizard() {
             </button>
             <button
               onClick={handleNext}
-              className="px-6 py-3 rounded-full font-semibold bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105"
+              className="px-6 py-3 rounded-full font-semibold bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition transform hover:scale-105"
             >
               {currentStep === totalSteps ? 'Continue to Sign In' : 'Next'}
             </button>

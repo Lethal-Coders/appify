@@ -54,12 +54,12 @@ export default function PricingCard({
   return (
     <div
       className={`relative bg-white dark:bg-gray-800/95 dark:backdrop-blur-xl rounded-2xl shadow-lg p-6 sm:p-8 transition-all hover:scale-105 ${
-        popular ? 'border-2 border-purple-500 ring-4 ring-purple-50 dark:ring-purple-900/20' : 'border border-gray-200 dark:border-gray-700/50'
+        popular ? 'border-2 border-[#B197E0] ring-4 ring-[#F0EDFD] dark:ring-[#524278]/20' : 'border border-gray-200 dark:border-gray-700/50'
       }`}
     >
       {popular && (
         <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-          <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-semibold">
+          <span className="bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-3 sm:px-4 py-1 rounded-full text-xs sm:text-sm font-semibold">
             Most Popular
           </span>
         </div>
@@ -79,7 +79,7 @@ export default function PricingCard({
         {features.map((feature, index) => (
           <li key={index} className="flex items-start">
             <svg
-              className="w-5 h-5 text-green-500 mr-3 flex-shrink-0 mt-0.5"
+              className="w-5 h-5 text-[#8B7AB8] dark:text-[#B197E0] mr-3 flex-shrink-0 mt-0.5"
               fill="currentColor"
               viewBox="0 0 20 20"
             >
@@ -99,7 +99,7 @@ export default function PricingCard({
         disabled={loading}
         className={`w-full py-3 px-4 sm:px-6 rounded-lg font-semibold transition text-sm sm:text-base ${
           popular
-            ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+            ? 'bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167]'
             : 'bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-600'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
       >

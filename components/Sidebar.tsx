@@ -77,11 +77,11 @@ export default function Sidebar({ user, onCollapsedChange }: SidebarProps) {
           <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700/50 flex items-center justify-center">
             {isExpanded ? (
               <div className="text-center">
-                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">Appify</h1>
+                <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] bg-clip-text text-transparent">Appify</h1>
                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Website to App</p>
               </div>
             ) : (
-              <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">A</div>
+              <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] bg-clip-text text-transparent">A</div>
             )}
           </div>
 
@@ -95,8 +95,8 @@ export default function Sidebar({ user, onCollapsedChange }: SidebarProps) {
                     onClick={() => setMobileOpen(false)}
                     className={`flex items-center ${isExpanded ? 'gap-3' : 'justify-center'} px-3 sm:px-4 py-3 rounded-lg transition ${
                       isActive(item.href)
-                        ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg'
-                        : 'text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20'
+                        ? 'bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white shadow-lg'
+                        : 'text-gray-700 dark:text-gray-300 hover:bg-[#F0EDFD] dark:hover:bg-[#524278]/20'
                     }`}
                     title={!isExpanded ? item.name : ''}
                   >
@@ -148,7 +148,7 @@ export default function Sidebar({ user, onCollapsedChange }: SidebarProps) {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className={`w-full flex items-center ${isExpanded ? 'gap-3' : 'justify-center'} px-3 sm:px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition`}
+              className={`w-full flex items-center ${isExpanded ? 'gap-3' : 'justify-center'} px-3 sm:px-4 py-3 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-[#F0EDFD] dark:hover:bg-[#524278]/20 transition`}
               title={!isExpanded ? (theme === 'dark' ? 'Dark Mode' : 'Light Mode') : ''}
             >
               <span className="text-lg sm:text-xl">{theme === 'dark' ? '🌙' : '☀️'}</span>

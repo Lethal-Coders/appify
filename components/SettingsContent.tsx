@@ -28,7 +28,7 @@ export default function SettingsContent() {
           <button
             onClick={toggleTheme}
             className={`relative inline-flex h-12 w-24 items-center rounded-full transition-colors ${
-              theme === 'dark' ? 'bg-primary' : 'bg-gray-300'
+              theme === 'dark' ? 'bg-gradient-to-r from-[#B197E0] to-[#8B7AB8]' : 'bg-gray-300'
             }`}
           >
             <span
@@ -45,7 +45,7 @@ export default function SettingsContent() {
             onClick={() => theme === 'dark' && toggleTheme()}
             className={`p-4 rounded-lg border-2 transition ${
               theme === 'light'
-                ? 'border-primary bg-blue-50 dark:bg-blue-900/20'
+                ? 'border-[#B197E0] bg-[#F0EDFD] dark:bg-[#524278]/20'
                 : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
             }`}
           >
@@ -61,7 +61,7 @@ export default function SettingsContent() {
             onClick={() => theme === 'light' && toggleTheme()}
             className={`p-4 rounded-lg border-2 transition ${
               theme === 'dark'
-                ? 'border-primary bg-blue-50 dark:bg-blue-900/20'
+                ? 'border-[#B197E0] bg-[#F0EDFD] dark:bg-[#524278]/20'
                 : 'border-gray-300 dark:border-gray-600 hover:border-gray-400'
             }`}
           >
@@ -114,7 +114,7 @@ export default function SettingsContent() {
             <input
               type="checkbox"
               defaultChecked
-              className="w-5 h-5 text-primary border-gray-300 rounded focus:ring-primary"
+              className="w-5 h-5 text-[#8B7AB8] border-gray-300 rounded focus:ring-[#B197E0]"
             />
           </div>
         </div>

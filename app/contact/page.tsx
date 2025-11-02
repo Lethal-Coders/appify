@@ -3,8 +3,11 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useSession } from 'next-auth/react'
+import ThemeToggle from '@/components/ThemeToggle'
 
 export default function ContactPage() {
+  const { data: session } = useSession(); // Added session initialization
   const { theme, toggleTheme } = useTheme()
   const [formData, setFormData] = useState({
     name: '',
@@ -13,6 +16,7 @@ export default function ContactPage() {
     message: '',
   })
   const [submitted, setSubmitted] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -26,33 +30,49 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gradient-to-br from-purple-100 via-purple-50 to-blue-50 dark:from-gray-950 dark:via-purple-950/20 dark:to-gray-900 relative overflow-hidden">
+    <main className="min-h-screen bg-gradient-to-b from-slate-100 via-purple-50 to-purple-100 dark:from-gray-950 dark:via-[#140F1F] dark:to-black relative overflow-hidden">
       {/* Decorative circles */}
-      <div className="absolute top-0 left-0 w-96 h-96 bg-purple-300/20 dark:bg-purple-500/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-blue-300/20 dark:bg-blue-500/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+      <div className="absolute top-0 left-0 w-96 h-96 bg-[#B197E0]/10 dark:bg-[#524278]/10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#8B7AB8]/10 dark:bg-[#3D2F5A]/10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
 
       {/* Header */}
-      <header className="relative z-10 container mx-auto px-6 py-6">
-        <nav className="flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-              Appify
-            </h1>
-          </Link>
-          <div className="flex items-center gap-6">
-            <button
-              onClick={toggleTheme}
-              className="p-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/30 transition"
-              title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
-            >
-              {theme === 'dark' ? '☀️' : '🌙'}
-            </button>
-            <Link
-              href="/"
-              className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition"
-            >
-              Back to Home
+      <header className="relative z-20 container mx-auto px-4 sm:px-6 py-6">
+        <nav className="bg-black/90 dark:bg-black/95 backdrop-blur-xl rounded-[2rem] px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between shadow-2xl border border-white/10">
+          <div className="flex items-center gap-2">
+            <Link href="/">
+              <h1 className="text-lg sm:text-xl md:text-2xl font-bold text-white cursor-pointer">Appify</h1>
             </Link>
+          </div>
+          
+          <div className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
+            <Link href="#about" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">About Us</Link>
+            <Link href="/pricing" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Pricing</Link>
+            <Link href="/contact" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Contact</Link>
+            <Link href="/support" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Support</Link>
+            {session ? (
+              <Link href="/dashboard" className="text-sm font-medium text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition border border-white/20">
+                Dashboard
+              </Link>
+            ) : (
+              <Link href="/auth/signin" className="text-sm font-medium text-white bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full transition border border-white/20">
+                Sign In
+              </Link>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 lg:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="p-2 rounded-lg text-white hover:bg-white/10 transition"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {menuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
           </div>
         </nav>
       </header>
@@ -91,7 +111,7 @@ export default function ContactPage() {
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition"
                     placeholder="Your name"
                   />
                 </div>
@@ -105,7 +125,7 @@ export default function ContactPage() {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -119,7 +139,7 @@ export default function ContactPage() {
                     required
                     value={formData.subject}
                     onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition"
                     placeholder="How can we help?"
                   />
                 </div>
@@ -133,14 +153,14 @@ export default function ContactPage() {
                     rows={6}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition resize-none"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent outline-none transition resize-none"
                     placeholder="Tell us more about your question or concern..."
                   />
                 </div>
 
                 <button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 shadow-lg"
+                  className="w-full bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-6 py-4 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition transform hover:scale-105 shadow-lg"
                 >
                   Send Message
                 </button>
@@ -170,6 +190,9 @@ export default function ContactPage() {
           </div>
         </div>
       </div>
+
+      {/* Theme Toggle Button */}
+      <ThemeToggle />
     </main>
   )
 }

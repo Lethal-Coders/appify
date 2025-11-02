@@ -59,7 +59,7 @@ export default function ProjectDetails({
 
   const statusColors: Record<string, string> = {
     DRAFT: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200',
-    GENERATING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200',
+    GENERATING: 'bg-[#F0EDFD] dark:bg-[#524278]/30 text-[#524278] dark:text-[#B197E0]',
     BUILDING: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
     COMPLETED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
     FAILED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200',
@@ -70,7 +70,7 @@ export default function ProjectDetails({
       <div className="mb-6">
         <Link
           href="/dashboard"
-          className="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-sm inline-flex items-center gap-2"
+          className="text-[#8B7AB8] dark:text-[#B197E0] hover:text-[#6F5E96] dark:hover:text-[#9585C0] text-sm inline-flex items-center gap-2"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -89,7 +89,7 @@ export default function ProjectDetails({
               href={project.websiteUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-purple-600 dark:text-purple-400 hover:underline"
+              className="text-[#8B7AB8] dark:text-[#B197E0] hover:underline"
             >
               {project.websiteUrl}
             </a>
@@ -162,7 +162,7 @@ export default function ProjectDetails({
                   </p>
                   <button
                     onClick={handlePayment}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 shadow-lg"
+                    className="bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-8 py-3 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition transform hover:scale-105 shadow-lg"
                   >
                     Choose a Plan
                   </button>
@@ -172,7 +172,7 @@ export default function ProjectDetails({
                   <button
                     onClick={handleGenerate}
                     disabled={generating}
-                    className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-8 py-4 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                    className="bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-8 py-4 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
                   >
                     {generating ? 'Generating...' : '🚀 Generate App'}
                   </button>
@@ -186,7 +186,7 @@ export default function ProjectDetails({
 
           {(project.status === 'GENERATING' || project.status === 'BUILDING') && (
             <div className="text-center py-8">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-purple-200 border-t-purple-600 mb-4"></div>
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-[#E5E0F7] border-t-[#8B7AB8] dark:border-[#524278]/30 dark:border-t-[#B197E0] mb-4"></div>
               <p className="text-gray-600 dark:text-gray-400 text-lg font-medium">
                 {project.status === 'GENERATING' ? 'Generating your app...' : 'Building AAB and IPA files...'}
               </p>
@@ -209,25 +209,25 @@ export default function ProjectDetails({
               >
                 📥 Download App (AAB & IPA)
               </a>
-              <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-700 rounded-lg p-6 mt-6">
-                <h4 className="font-semibold text-purple-900 dark:text-purple-300 mb-3">
+              <div className="bg-[#F0EDFD] dark:bg-[#524278]/20 border border-[#B197E0]/30 dark:border-[#8B7AB8]/30 rounded-lg p-6 mt-6">
+                <h4 className="font-semibold text-[#524278] dark:text-[#B197E0] mb-3">
                   What&apos;s included:
                 </h4>
-                <ul className="space-y-2 text-sm text-purple-800 dark:text-purple-300 text-left max-w-2xl mx-auto">
+                <ul className="space-y-2 text-sm text-[#524278] dark:text-[#B197E0] text-left max-w-2xl mx-auto">
                   <li className="flex items-start">
-                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-[#8B7AB8] dark:text-[#B197E0] mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span><strong>app.aab</strong> - Android App Bundle (for Google Play Store submission)</span>
                   </li>
                   <li className="flex items-start">
-                    <svg className="w-5 h-5 text-purple-600 dark:text-purple-400 mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-5 h-5 text-[#8B7AB8] dark:text-[#B197E0] mr-2 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
                     <span><strong>app.ipa</strong> - iOS application (install via TestFlight or enterprise distribution)</span>
                   </li>
                 </ul>
-                <p className="mt-4 text-sm text-purple-700 dark:text-purple-400">
+                <p className="mt-4 text-sm text-[#524278] dark:text-[#B197E0]">
                   💡 Extract the ZIP file. Upload the AAB to Google Play Console for Android distribution.
                 </p>
               </div>
@@ -246,7 +246,7 @@ export default function ProjectDetails({
               <button
                 onClick={handleGenerate}
                 disabled={generating || requiresPayment}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-6 py-3 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {requiresPayment ? 'Payment Required' : '🔄 Retry Generation'}
               </button>

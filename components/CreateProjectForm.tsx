@@ -213,14 +213,14 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
                 key={plan.id}
                 className={`relative bg-white dark:bg-gray-900 rounded-2xl border-2 p-6 transition-all cursor-pointer hover:scale-105 ${
                   plan.popular
-                    ? 'border-purple-500 shadow-lg shadow-purple-500/20'
-                    : 'border-gray-200 dark:border-gray-700 hover:border-purple-400'
+                    ? 'border-[#B197E0] shadow-lg shadow-[#B197E0]/20'
+                    : 'border-gray-200 dark:border-gray-700 hover:border-[#B197E0]'
                 }`}
                 onClick={() => handlePlanSelect(plan.id as 'single' | 'monthly' | 'yearly')}
               >
                 {plan.popular && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                    <span className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    <span className="bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-4 py-1 rounded-full text-sm font-semibold">
                       Most Popular
                     </span>
                   </div>
@@ -266,7 +266,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
                   onClick={() => handlePlanSelect(plan.id as 'single' | 'monthly' | 'yearly')}
                   className={`w-full py-3 rounded-lg font-semibold transition ${
                     plan.popular
-                      ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
+                      ? 'bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167]'
                       : 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700'
                   }`}
                 >
@@ -332,7 +332,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
           </div>
         </div>
 
-        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-6 mb-6 border-2 border-purple-200 dark:border-purple-700">
+        <div className="bg-[#F0EDFD] dark:bg-[#524278]/20 rounded-lg p-6 mb-6 border-2 border-[#B197E0]/30 dark:border-[#8B7AB8]/30">
           <div className="flex justify-between items-start mb-4">
             <div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
@@ -363,7 +363,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
           <button
             onClick={handlePayAndCreate}
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+            className="flex-1 bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-6 py-3 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
           >
             {loading ? 'Processing...' : 'Pay & Create App'}
           </button>
@@ -395,7 +395,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
             required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent"
             placeholder="My Awesome App"
           />
         </div>
@@ -411,7 +411,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
             onChange={(e) =>
               setFormData({ ...formData, websiteUrl: e.target.value })
             }
-            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent"
             placeholder="https://example.com"
           />
         </div>
@@ -431,7 +431,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
               type="text"
               value={formData.primaryColor}
               onChange={(e) => setFormData({ ...formData, primaryColor: e.target.value })}
-              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary focus:border-transparent"
+              className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#B197E0] focus:border-transparent"
               placeholder="#8B5CF6"
             />
           </div>
@@ -503,7 +503,7 @@ export default function CreateProjectForm({ userId }: CreateProjectFormProps) {
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+            className="flex-1 bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white px-6 py-3 rounded-lg font-semibold hover:from-[#A086CF] hover:via-[#7A69A7] hover:to-[#413167] transition disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
           >
             Continue to Pricing
           </button>

@@ -24,7 +24,7 @@ export default function ProjectList({ projects }: ProjectListProps) {
 
   const statusColors: Record<string, string> = {
     DRAFT: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200',
-    GENERATING: 'bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-200',
+    GENERATING: 'bg-[#F0EDFD] dark:bg-[#524278]/30 text-[#524278] dark:text-[#B197E0]',
     BUILDING: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-200',
     COMPLETED: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200',
     FAILED: 'bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200',
@@ -36,7 +36,7 @@ export default function ProjectList({ projects }: ProjectListProps) {
         <Link
           key={project.id}
           href={`/dashboard/project/${project.id}`}
-          className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-200 dark:border-gray-700 hover:border-purple-300 dark:hover:border-purple-600"
+          className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm hover:shadow-lg transition border border-gray-200 dark:border-gray-700 hover:border-[#B197E0] dark:hover:border-[#8B7AB8]"
         >
           <div className="flex justify-between items-start mb-4">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">

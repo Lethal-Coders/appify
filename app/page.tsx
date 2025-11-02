@@ -6,6 +6,8 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { useSession, signOut } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import ThemeToggle from '@/components/ThemeToggle'
+import SectionNavigator from '@/components/SectionNavigator'
 
 export default function Home() {
   const [mounted, setMounted] = useState(false)
@@ -23,6 +25,9 @@ export default function Home() {
     return null
   }
 
+  // Define section IDs for navigation
+  const sections = ['hero', 'features', 'how-it-works', 'pricing', 'cta']
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-slate-100 via-purple-50 to-purple-100 dark:from-gray-950 dark:via-[#140F1F] dark:to-black relative overflow-hidden">
       {/* Header */}
@@ -35,12 +40,11 @@ export default function Home() {
           </div>
           
           <div className="hidden lg:flex items-center gap-4 xl:gap-6 2xl:gap-8">
-            <Link href="#about" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">About Us</Link>
-            <Link href="/dashboard/pricing" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Pricing</Link>
+            <Link href="/about" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">About Us</Link>
+            <Link href="/pricing" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Pricing</Link>
             <Link href="/contact" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Contact</Link>
-            <Link href="/dashboard/support" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Support</Link>
+            <Link href="/support" className="text-sm font-medium text-white/90 hover:text-white transition whitespace-nowrap">Support</Link>
             
-            {/* Show user profile or Sign In button */}
             {session ? (
               <div className="relative">
                 <button
@@ -62,7 +66,6 @@ export default function Home() {
                   )}
                 </button>
 
-                {/* User Dropdown Menu */}
                 {showUserMenu && (
                   <>
                     <div className="absolute right-0 mt-2 w-56 bg-black/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 py-2 z-50">
@@ -134,10 +137,10 @@ export default function Home() {
         {menuOpen && (
           <div className="lg:hidden absolute top-full left-0 right-0 mt-2 mx-4 bg-black/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/10 py-4 z-50">
             <div className="space-y-1 px-4">
-              <Link href="#about" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>About Us</Link>
-              <Link href="/dashboard/pricing" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>Pricing</Link>
+              <Link href="/about" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>About Us</Link>
+              <Link href="/pricing" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>Pricing</Link>
               <Link href="/contact" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>Contact</Link>
-              <Link href="/dashboard/support" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>Support</Link>
+              <Link href="/support" className="block px-4 py-3 text-white/90 hover:bg-white/10 rounded-lg transition" onClick={() => setMenuOpen(false)}>Support</Link>
               
               {session ? (
                 <>
@@ -161,13 +164,11 @@ export default function Home() {
         )}
       </header>
 
-      {/* Hero Section styled like the NixtNode image */}
-      <section className="relative z-10 container mx-auto px-4 sm:px-6 pt-8 pb-20">
+      {/* Hero Section - Keep as is, you love this */}
+      <section id="hero" className="relative z-10 container mx-auto px-4 sm:px-6 pt-8 pb-20">
         <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem] border border-black/10 shadow-[0_40px_120px_-20px_rgba(0,0,0,0.3)]">
-          {/* Purple gradient background with dark edges */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,#F0EDFD_5%,#B197E0_36%,#524278_65%,#18171D_85%)] rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]" />
 
-          {/* Decorative curved lines */}
           <svg
             className="pointer-events-none absolute inset-0 opacity-30 rounded-[2rem] sm:rounded-[2.5rem] lg:rounded-[3rem]"
             viewBox="0 0 1200 800"
@@ -185,11 +186,8 @@ export default function Home() {
             <ellipse cx="350" cy="500" rx="180" ry="180" fill="none" stroke="url(#curveGrad)" strokeWidth="1" opacity="0.3" />
           </svg>
 
-          {/* Main content */}
           <div className="relative px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 py-12 sm:py-16 md:py-20 lg:py-24 pb-24 sm:pb-32 md:pb-40">
-            {/* Top section: headline left, description + button right */}
             <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16 items-start mb-12 sm:mb-16 lg:mb-20">
-              {/* Left: Large headline */}
               <div className="max-w-full">
                 <div className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-bold mb-2 text-white break-words leading-tight">
                   Appify
@@ -202,7 +200,6 @@ export default function Home() {
                 </p>
               </div>
 
-              {/* Right: Description + CTA button */}
               <div className="lg:pt-8 xl:pt-12 flex flex-col justify-start max-w-full">
                 <div className="bg-black/10 backdrop-blur-sm rounded-2xl sm:rounded-3xl p-5 sm:p-6 mb-5 sm:mb-6 border border-white/10">
                   <p className="text-white/95 text-sm sm:text-base md:text-lg leading-relaxed">
@@ -220,10 +217,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Bottom: Stat cards positioned like in the image */}
             <div className="relative">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 items-stretch">
-                {/* Block 1 - 5-10 Minutes to Launch */}
                 <div className="w-full">
                   <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-black/80 backdrop-blur-xl p-6 sm:p-8 lg:p-10 border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)] h-full min-h-[200px] sm:min-h-[220px]">
                     <div className="text-center h-full flex flex-col items-center justify-center">
@@ -235,7 +230,6 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Block 2 - NO Code Required! */}
                 <div className="w-full">
                   <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-black/80 backdrop-blur-xl p-6 sm:p-8 lg:p-10 border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)] h-full min-h-[200px] sm:min-h-[220px]">
                     <div className="text-center h-full flex flex-col items-center justify-center">
@@ -247,13 +241,11 @@ export default function Home() {
                   </div>
                 </div>
 
-                {/* Block 3 - iOS & Android Production-Ready Files */}
                 <div className="w-full sm:col-span-2 lg:col-span-1">
                   <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-black/80 backdrop-blur-xl p-6 sm:p-8 lg:p-10 border border-white/10 shadow-[0_20px_80px_rgba(0,0,0,0.6)] h-full min-h-[200px] sm:min-h-[220px]">
                     <div className="text-center h-full flex flex-col items-center justify-center">
                       <div className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold text-white mb-2 sm:mb-3 leading-tight px-2">
-                        iOS &
-                        <br className="sm:hidden" /> Android
+                        iOS & Android
                       </div>
                       <p className="text-xs sm:text-sm font-medium text-white whitespace-nowrap">Production-Ready Files</p>
                     </div>
@@ -263,87 +255,189 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* Features Section - Use hero purple gradient */}
+      <section id="features" className="relative z-10 container mx-auto px-4 sm:px-6 py-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] dark:from-[#B197E0] dark:via-[#9585C0] dark:to-[#7B6BA8] bg-clip-text text-transparent">
+              Why Choose Appify?
+            </h2>
+            <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300 max-w-3xl mx-auto">
+              Everything you need to take your website mobile, without the complexity
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#B197E0] to-[#524278] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 group-hover:scale-110 transition-transform">
+                ⚡
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Lightning Fast</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Generate production-ready native apps in just 5-10 minutes. No waiting weeks for developers.
+              </p>
+            </div>
+
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#8B7AB8] to-[#3D2F5A] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 group-hover:scale-110 transition-transform">
+                💎
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Cost Effective</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                Save thousands compared to hiring developers. Get professional apps at a fraction of the cost.
+              </p>
+            </div>
+
+            <div className="group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-2xl hover:scale-105 transition-all duration-300">
+              <div className="w-16 h-16 bg-gradient-to-br from-[#6F5E96] to-[#2A1F3D] rounded-2xl flex items-center justify-center text-white text-3xl mb-6 group-hover:scale-110 transition-transform">
+                🎯
+              </div>
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Native Quality</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                True native apps for iOS and Android, not just wrapped websites. Your users will notice.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section - Use hero purple gradient */}
+      <section id="how-it-works" className="relative z-10 py-24">
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-100 via-purple-50 to-white dark:from-[#2A1F3D] dark:via-[#140F1F] dark:to-transparent"></div>
         
-        {/* Floating scroll-down button - ALWAYS VISIBLE positioned below the card */}
-        <div className="flex justify-center mt-8 relative z-30">
+        <div className="relative container mx-auto px-4 sm:px-6">
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-4 text-gray-900 dark:text-white">
+                How It Works
+              </h2>
+              <p className="text-lg sm:text-xl text-gray-700 dark:text-gray-300">
+                Three simple steps to launch your mobile app
+              </p>
+            </div>
+
+            <div className="space-y-8">
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+                <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#B197E0] to-[#524278] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  1
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Enter Your Details</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                    Provide your website URL, app name, and customize your branding with icons and colors.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+                <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#8B7AB8] to-[#3D2F5A] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  2
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">We Build Your App</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                    Our system automatically generates native iOS and Android apps using React Native and Expo.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-gray-200/50 dark:border-gray-700/50">
+                <div className="flex-shrink-0 w-20 h-20 bg-gradient-to-br from-[#6F5E96] to-[#2A1F3D] rounded-full flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                  3
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Download & Deploy</h3>
+                  <p className="text-gray-600 dark:text-gray-400 text-lg leading-relaxed">
+                    Get your AAB and IPA files ready to upload to Google Play Store and Apple App Store.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Teaser Section - Use hero purple gradient */}
+      <section id="pricing" className="relative z-10 container mx-auto px-4 sm:px-6 py-24">
+        <div className="max-w-6xl mx-auto">
+          <div className="relative overflow-hidden rounded-[3rem] border border-gray-200 dark:border-gray-800 shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-[#B197E0] via-[#6F5E96] to-[#2A1F3D] dark:from-[#8B7AB8] dark:via-[#524278] dark:to-[#18171D]"></div>
+            
+            <div className="relative px-8 sm:px-12 md:px-16 lg:px-20 py-16 sm:py-20 md:py-24">
+              <div className="text-center max-w-3xl mx-auto">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-white mb-6">
+                  Simple, Transparent Pricing
+                </h2>
+                <p className="text-xl sm:text-2xl text-white/90 mb-10 leading-relaxed">
+                  Choose the plan that works for you. No hidden fees, cancel anytime.
+                </p>
+                
+                <div className="flex flex-wrap justify-center gap-4">
+                  <Link
+                    href="/pricing"
+                    className="inline-flex items-center justify-center rounded-full px-8 py-4 bg-white text-[#524278] font-bold text-lg hover:bg-gray-100 shadow-2xl hover:scale-105 transition-all duration-200"
+                  >
+                    View Pricing Plans
+                  </Link>
+                  <Link
+                    href="/setup"
+                    className="inline-flex items-center justify-center rounded-full px-8 py-4 bg-black/20 backdrop-blur-sm text-white font-bold text-lg border-2 border-white/30 hover:bg-black/30 hover:scale-105 transition-all duration-200"
+                  >
+                    Start Free Trial
+                  </Link>
+                </div>
+
+                <div className="mt-12 flex flex-wrap justify-center gap-8 text-white/90">
+                  <div className="flex items-center gap-2">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">No setup fees</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">Cancel anytime</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="font-medium">24/7 support</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Final CTA Section - Use hero purple gradient */}
+      <section id="cta" className="relative z-10 container mx-auto px-4 sm:px-6 py-16 pb-32">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] dark:from-[#B197E0] dark:via-[#9585C0] dark:to-[#7B6BA8] bg-clip-text text-transparent">
+            Ready to Go Mobile?
+          </h2>
+          <p className="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Join thousands of businesses already reaching their mobile audience with Appify
+          </p>
           <Link
-            href="#about"
-            className="inline-flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white text-purple-700 shadow-2xl border border-black/10 ring-1 ring-black/10 hover:translate-y-0.5 transition-transform"
-            aria-label="Scroll to About"
+            href="/setup"
+            className="inline-flex items-center justify-center rounded-full px-10 py-5 bg-gradient-to-r from-[#B197E0] via-[#8B7AB8] to-[#524278] text-white font-bold text-xl shadow-2xl hover:shadow-3xl hover:scale-105 transition-all duration-300"
           >
-            <svg className="w-5 h-5 sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
+            Create Your App Now →
           </Link>
         </div>
       </section>
 
-      {/* About Section - Appify */}
-      <div id="about" className="relative z-10 container mx-auto px-4 sm:px-6 py-20">
-        <div className="max-w-6xl mx-auto">
-          <div className="bg-black/70 backdrop-blur-xl rounded-[3rem] p-8 sm:p-12 md:p-16 shadow-2xl border border-white/10">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl sm:text-5xl font-extrabold text-white mb-4">About Appify</h2>
-              <p className="text-lg sm:text-xl text-white/80 max-w-3xl mx-auto">We make mobile app creation accessible to everyone</p>
-            </div>
-            
-            <div className="grid sm:grid-cols-2 gap-8 mb-12">
-              <div className="h-full text-center p-8 bg-black/80 rounded-3xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-                <div className="text-5xl mb-4">🚀</div>
-                <h3 className="text-2xl font-bold text-white mb-3">Our Mission</h3>
-                <p className="text-white/80">To empower businesses and individuals to reach mobile audiences without the complexity and cost of traditional app development.</p>
-              </div>
-              
-              <div className="h-full text-center p-8 bg-black/80 rounded-3xl border border-white/10 shadow-[0_10px_40px_rgba(0,0,0,0.5)]">
-                <div className="text-5xl mb-4">💡</div>
-                <h3 className="text-2xl font-bold text-white mb-3">Our Vision</h3>
-                <p className="text-white/80">A world where every website owner can have a professional mobile app, regardless of technical expertise or budget.</p>
-              </div>
-            </div>
-            
-            <div className="rounded-3xl p-8 bg-black/85 border border-white/10 shadow-xl">
-              <h3 className="text-2xl font-extrabold text-center text-white mb-6">Why Choose Appify?</h3>
-              <div className="grid sm:grid-cols-3 gap-6 text-white">
-                <div className="text-center px-4 py-6 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-4xl mb-3">⚡</div>
-                  <h4 className="font-semibold mb-2">Fast & Easy</h4>
-                  <p className="text-sm text-white/80">Generate apps in minutes, not months</p>
-                </div>
-                <div className="text-center px-4 py-6 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-4xl mb-3">💰</div>
-                  <h4 className="font-semibold mb-2">Affordable</h4>
-                  <p className="text-sm text-white/80">No expensive developers needed</p>
-                </div>
-                <div className="text-center px-4 py-6 rounded-2xl bg-white/5 border border-white/10">
-                  <div className="text-4xl mb-3">🎯</div>
-                  <h4 className="font-semibold mb-2">Professional</h4>
-                  <p className="text-sm text-white/80">Production-ready native apps</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {/* Section Navigator - Floating button in the middle */}
+      <SectionNavigator sections={sections} />
 
-      {/* CTA Section */}
-      <div className="relative z-10 container mx-auto px-4 sm:px-6 pb-20">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-purple-600 to-purple-800 dark:from-purple-900 dark:to-purple-950 rounded-[3rem] p-8 sm:p-12 md:p-16 shadow-2xl border border-purple-400/20 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6">
-              Ready to Create Your App?
-            </h2>
-            <p className="text-lg sm:text-xl text-white/90 mb-8 max-w-2xl mx-auto">
-              Join thousands of businesses already using Appify to reach their mobile audience
-            </p>
-            <Link
-              href="/setup"
-              className="inline-flex items-center justify-center rounded-full px-8 py-4 bg-white text-purple-700 font-semibold text-sm uppercase tracking-wider shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Get Started Now
-            </Link>
-          </div>
-        </div>
-      </div>
+      {/* Theme Toggle and Scroll to Top */}
+      <ThemeToggle />
     </main>
   )
 }
