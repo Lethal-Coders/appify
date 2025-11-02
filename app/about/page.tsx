@@ -165,7 +165,7 @@ export default function AboutPage() {
             About Appify
           </h1>
           <p className="text-xl sm:text-2xl md:text-3xl text-gray-700 dark:text-gray-300 font-light leading-relaxed max-w-3xl mx-auto">
-            We're on a mission to democratize mobile app development and make it accessible to everyone.
+            We&apos;re on a mission to democratize mobile app development and make it accessible to everyone.
           </p>
         </div>
       </section>
@@ -226,7 +226,7 @@ export default function AboutPage() {
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">The Problem</h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    Appify was born from a frustration we all shared: the mobile app development process was too expensive, too slow, and too complicated. Small businesses and entrepreneurs were being left behind in the mobile revolution simply because they couldn't afford the astronomical costs of traditional app development.
+                    Appify was born from a frustration we all shared: the mobile app development process was too expensive, too slow, and too complicated. Small businesses and entrepreneurs were being left behind in the mobile revolution simply because they couldn&apos;t afford the astronomical costs of traditional app development.
                   </p>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export default function AboutPage() {
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Today</h3>
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                    We're proud to have helped thousands of businesses reach their mobile audience. From e-commerce stores to content publishers, service providers to community platforms, Appify powers mobile experiences for companies of all sizes around the world.
+                    We&apos;re proud to have helped thousands of businesses reach their mobile audience. From e-commerce stores to content publishers, service providers to community platforms, Appify powers mobile experiences for companies of all sizes around the world.
                   </p>
                 </div>
               </div>
