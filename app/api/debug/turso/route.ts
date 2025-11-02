@@ -5,8 +5,11 @@ export async function GET() {
     // Try to load and use LibSQL directly without Prisma
     const { createClient } = require('@libsql/client')
 
+    const url = process.env.TURSO_DATABASE_URL || process.env.DATABASE_URL
+    if (!url) throw new Error('No TURSO_DATABASE_URL or DATABASE_URL found')
+
     const client = createClient({
-      url: process.env.DATABASE_URL,
+      url,
       authToken: process.env.TURSO_AUTH_TOKEN,
     })
 
