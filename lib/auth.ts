@@ -23,8 +23,17 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('[NextAuth] signIn callback', { user, account: account?.provider, profile: !!profile })
-      return true
+      console.log('[NextAuth] signIn callback START', {
+        userEmail: user?.email,
+        provider: account?.provider,
+        hasProfile: !!profile
+      })
+      try {
+        return true
+      } catch (error) {
+        console.error('[NextAuth] signIn callback ERROR', error)
+        return false
+      }
     },
     async jwt({ token, user }) {
       if (user) {
@@ -36,7 +45,7 @@ export const authOptions: NextAuthOptions = {
       console.log('[NextAuth] session callback', { session: !!session, token: !!token })
       if (session?.user) {
         // Prefer token.id, fallback to token.sub
-        ;(session.user as any).id = (token as any).id || token.sub || (session.user as any).id
+        ; (session.user as any).id = (token as any).id || token.sub || (session.user as any).id
       }
       return session
     },
